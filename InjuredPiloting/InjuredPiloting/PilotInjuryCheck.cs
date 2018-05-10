@@ -25,7 +25,7 @@ namespace InjuredPiloting
 
                 //we know we exist now, so...
 
-                int medTechs = battletechGame.Simulation.MedTechs.Count;
+                int medTechs = battletechGame.Simulation.MedTechSkill;
 
                 if(medTechs < 3)
                 {
