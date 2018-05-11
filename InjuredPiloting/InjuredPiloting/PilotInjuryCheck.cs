@@ -5,6 +5,8 @@ using System.Text;
 using Harmony;
 using BattleTech;
 using System.Reflection;
+using UnityEngine;
+using System.Reflection.Emit;
 
 namespace InjuredPiloting
 {
@@ -14,7 +16,7 @@ namespace InjuredPiloting
         [HarmonyPatch("CanPilot", PropertyMethod.Getter)]
         public static class BattleTech_Pilot_CanPilot_Prefix
         {
-            static bool Prefix(Pilot __instance, bool __result)
+            static bool Prefix(Pilot __instance, ref bool __result)
             {
                 GameInstance battletechGame = UnityGameInstance.BattleTechGame;
 
@@ -33,6 +35,11 @@ namespace InjuredPiloting
                 }
 
                 int numInjuries = __instance.Injuries;
+
+                if(numInjuries <= 0)
+                {
+                    return true; //non-applicable
+                }
 
                 if((medTechs / 3) >= numInjuries) //formula is that for every 3 medtechs, we can ignore an injury. So if we have enough medtechs to equal the number of injuries the pilot has...
                 {
