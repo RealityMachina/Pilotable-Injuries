@@ -57,6 +57,9 @@ namespace InjuredPiloting
         {
             static void Prefix(Pilot __instance, string sourceID, int stackItemUID, int dmg, string source)
             {
+                if (__instance == null || __instance.ParentActor == null)
+                    return;
+
                 if (__instance.ParentActor != null && __instance.ParentActor.StatCollection.GetValue<bool>("IgnorePilotInjuries"))
                 {
                     return;
@@ -103,10 +106,32 @@ namespace InjuredPiloting
         {
             static void Postfix(SimGameState __instance)
             {
+                if(Holder.injPilots == null || Holder.newlyInjured == null)
+                {
+                    return;
+                }
+                if(Holder.injPilots.Count == 0 || Holder.newlyInjured.Count == 0)
+                {
+                    return;
+                }
+
                 foreach (Pilot pilot in Holder.injPilots)
                 {
-                    if(Holder.newlyInjured.Contains(pilot))
+                    if(pilot == null)
                     {
+                        continue;
+                    }
+
+                    foreach (Pilot injuredPilot in Holder.newlyInjured)
+                    {
+                        if(injuredPilot == null)
+                        {
+                            continue;
+                        }
+                        if(injuredPilot.Description.Id != pilot.Description.Id)
+                        {
+                            return;
+                        }
                         //an already injured pilot has been injured, so...
                         WorkOrderEntry_MedBayHeal workOrderEntry_MedBayHeal;
                         if (!__instance.MedBayQueue.SubEntryContainsID(pilot.Description.Id))
@@ -119,6 +144,7 @@ namespace InjuredPiloting
                         workOrderEntry_MedBayHeal.SetCost(GetInjuryCost(pilot, __instance));
                     }
                 }
+
             }
 
             private static int GetInjuryCost(Pilot p, SimGameState __instance)

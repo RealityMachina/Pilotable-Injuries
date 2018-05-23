@@ -24,6 +24,7 @@ namespace InjuredPiloting
         public static void Reset()
         {
             injPilots = new HashSet<Pilot>();
+            newlyInjured = new HashSet<Pilot>();
         }
     }
 
