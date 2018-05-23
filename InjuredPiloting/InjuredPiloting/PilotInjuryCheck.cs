@@ -57,10 +57,21 @@ namespace InjuredPiloting
         {
             static void Prefix(Pilot __instance, string sourceID, int stackItemUID, int dmg, string source)
             {
-                if (__instance == null || __instance.ParentActor == null)
+                if (__instance == null )
+                {
                     return;
+                }
 
-                if (__instance.ParentActor != null && __instance.ParentActor.StatCollection.GetValue<bool>("IgnorePilotInjuries"))
+                if(__instance.ParentActor == null)
+                {
+                    return;
+                }
+                if (__instance.ParentActor.StatCollection.GetValue<bool>("IgnorePilotInjuries"))
+                {
+                    return;
+                }
+
+                if(!__instance.ParentActor.team.LocalPlayerControlsTeam)
                 {
                     return;
                 }
@@ -77,7 +88,10 @@ namespace InjuredPiloting
                     return;
                 }
                 //we're getting injured, so...
-                Holder.newlyInjured.Add(__instance);
+                if (Holder.newlyInjured != null)
+                {
+                    Holder.newlyInjured.Add(__instance);
+                }
             }
         }
 
